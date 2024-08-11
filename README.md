@@ -1,4 +1,5 @@
 # Chat bubbles for content creator!
 using OBS studio or other tools
 
-![d](https://github.com/user-attachments/assets/a5ab2be7-da90-435c-8767-3da11b3280f2)
+
+![image](https://github.com/user-attachments/assets/84d76389-c928-4851-b270-a064bd4091a3)
