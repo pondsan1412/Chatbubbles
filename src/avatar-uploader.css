@@ -1,0 +1,11 @@
+.avatar-uploader {
+    margin-bottom: 20px;
+  }
+  
+  .avatar-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: 10px;
+  }
+  

@@ -1,0 +1,22 @@
+.bubble.input,
+.bubble.input .bubble-content {
+  transition: opacity 0.4s ease-in-out;
+  font-family: 'Hack', monospace;
+  opacity: 1;
+  border: none;
+  outline: none;
+}
+
+.bubble.input.submitted {
+  transition: none;
+}
+
+.bubble.input.empty {
+  opacity: 0;
+}
+
+.bubble.input > div {
+  background-color: var(--bubble-background-color);
+  font-size: 20px;
+  min-width: 30px;
+}
