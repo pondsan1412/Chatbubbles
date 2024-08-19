@@ -1,43 +1,54 @@
 import { AnimatePresence } from 'framer-motion';
 import { useCallback, useState } from 'react';
+import axios from 'axios';
 import './App.css';
 import Bubble from './Bubble';
 import BubbleInput from './BubbleInput';
 import Chat from './chat';
 import useMessages from './use-messages';
 import { SketchPicker } from 'react-color';
-import AvatarUploader from './avatar-uploader'; // Add this if you include the avatar uploader component
+import AvatarUploader from './avatar-uploader';
 
 function App() {
   const [messages, addMessage] = useMessages([]);
   const [newMessage, setNewMessage] = useState('');
   const [fillColour, setFillColour] = useState('#e6e5eb');
   const [strokeColour, setStrokeColour] = useState('#000000');
-  const [avatarUrl, setAvatarUrl] = useState(''); // State for avatar URL
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = useCallback(
-    (bubbleHeight, avatarUrl) => {
-      if (newMessage.length > 0) {
+  const handleSubmit = useCallback(async (bubbleHeight, avatarUrl) => {
+    if (newMessage.length > 0) {
+      setLoading(true);
+      try {
+        // ส่งข้อความไปยัง API สำหรับการแปล
+        const response = await axios.post('http://127.0.0.1:8000/api/translate', { text: newMessage });
+
+
+        const translatedMessage = response.data.translated_text;
+
+        // เพิ่มข้อความที่แปลแล้วไปยังข้อความ
         addMessage({
           id: +new Date(),
-          text: newMessage,
+          text: translatedMessage,
           height: bubbleHeight,
-          avatarUrl // Include avatarUrl in the message
+          avatarUrl
         });
         setNewMessage('');
+      } catch (error) {
+        console.error('Translation error:', error);
+      } finally {
+        setLoading(false);
       }
-    },
-    [newMessage, messages]
-  );
+    }
+  }, [newMessage, addMessage]);
 
   const handleFillColourChange = (color) => {
     setFillColour(color.hex);
-    console.log(color);
   };
 
   const handleStrokeColourChange = (color) => {
     setStrokeColour(color.hex);
-    console.log(color);
   };
 
   const lastMessage = messages[messages.length - 1];
@@ -45,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      <AvatarUploader onUpload={setAvatarUrl} /> {/* Add this if you include the avatar uploader component */}
+      <AvatarUploader onUpload={setAvatarUrl} />
       <Chat>
         <AnimatePresence>
           {messages.map(m => (
@@ -55,7 +66,7 @@ function App() {
               dy={dy}
               fillColour={fillColour}
               strokeColour={strokeColour}
-              avatarUrl={m.avatarUrl} // Pass avatar URL to Bubble
+              avatarUrl={m.avatarUrl}
             >
               {m.text}
             </Bubble>
@@ -67,8 +78,9 @@ function App() {
           onSubmit={handleSubmit}
           fillColour={fillColour}
           strokeColour={strokeColour}
-          avatarUrl={avatarUrl} // Pass avatar URL to BubbleInput
+          avatarUrl={avatarUrl}
         />
+        {loading && <div>Loading...</div>}
       </Chat>
       
       <div className="picker">
